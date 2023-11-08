@@ -7,35 +7,36 @@
 #include <vector>
 using namespace std;
 
+int n, m, s;
+int tmp1, tmp2, tmp3;
+
+// The original distance
+int dist[105][105];
+// The calculated distance from s to all
+int _dist[105];
+// Whether considered as the head of the priority queue
+bool isBooked[105];
+// Queues containing all "neibours"
+queue<int> edge[105];
+
+// A new class for sorting the nodes in the priority queue
 class node
 {
 public:
     int index;
-    int dist;
 
     node(int idx)
     {
         index = idx;
-        dist = maxDist;
-    }
-
-    node(int idx, int dst)
-    {
-        index = idx;
-        dist = dst;
     }
 
     bool operator>(const node &other) const
     {
-        return dist > other.dist;
+        return _dist[index] > _dist[other.index];
     }
 };
 
-int n, m, s;
-int tmp1, tmp2, tmp3;
-int dist[105][105];
-bool isBooked[105];
-
+// The priority queue recording and sorting the unconsidered nodes (May adds nodes repeatedly)
 priority_queue<node, vector<node>, greater<node> > q;
 
 template <typename T>
@@ -62,57 +63,68 @@ int main()
             else
                 dist[i][j] = 0;
     }
+    for (int i = 0; i < n; i++)
+        _dist[i] = maxDist;
+    _dist[s] = 0;
+
+    // Initialize the edge queue
+    for (int i = 0; i < n; i++)
+    {
+        while (!edge[i].empty())
+            edge[i].pop();
+    }
 
     // Initialize the booking status
     memset(isBooked, false, sizeof(isBooked));
     isBooked[s] = true;
+
+    // Initialize the priority queue
+    while (!q.empty())
+        q.pop();
+    q.push(node(s));
 
     // Input lengths of the m directed edges
     for (int i = 0; i < m; i++)
     {
         cin >> tmp1 >> tmp2 >> tmp3;
         dist[tmp1][tmp2] = tmp3;
+        edge[tmp1].push(tmp2);
     }
-
-    // Initialize the priority queue
-    while (!q.empty())
-        q.pop();
-    for (int i = 0; i < n; i++)
-        q.push(node(i, dist[s][i]));
-    q.pop();
 
     while (!q.empty())
     {
         // Find the closeset unbooked node to s
         int tmpChoice = q.top().index;
-        int tmpDist = q.top().dist;
-        q.pop()
+        int tmpDist = _dist[tmpChoice];
+        q.pop();
+
+        // Pop all the same nodes
+        while (!q.empty() && q.top().index == tmpChoice)
+            q.pop();
+
+        // Renew the booking status
+        isBooked[tmpChoice] = true;
 
         // If all reachable nodes have been considered
-        if(tmpDist >= maxDist) break;
+        if (tmpDist >= maxDist)
+            break;
 
-        if()
+        // Renew the distances of the unbooked nodes
+        while (!edge[tmpChoice].empty())
+        {
+            int _tmpChoice = edge[tmpChoice].front();
+            edge[tmpChoice].pop();
+            if (!isBooked[_tmpChoice])
+            {
+                _dist[_tmpChoice] = _min(_dist[_tmpChoice], _dist[tmpChoice] + dist[tmpChoice][_tmpChoice]);
+                q.push(_tmpChoice);
+            }
+        }
     }
 
-    //     // If no node needs consideration
-    //     if (isEnd)
-    //         break;
-
-    //     // Book the node tmpChoice
-    //     isBooked[tmpChoice] = true;
-
-    //     // Renew the distances of unbooked nodes
-    //     for (int i = 0; i < n; i++)
-    //     {
-    //         if (!isBooked[i])
-    //             dist[s][i] = _min(dist[s][i], dist[s][tmpChoice] + dist[tmpChoice][i]);
-    //     }
-    // }
-
-    // // Print the distances from node s to all nodes (Single source minimal route)
-    // for (int i = 0; i < n; i++)
-    //     cout << dist[s][i] << " ";
-    // cout << "\n";
-
-    // return 0;
+    // Print the distances
+    for (int i = 0; i < n; i++)
+        cout << _dist[i] << " ";
+    cout << "\n";
+    return 0;
 }
