@@ -96,7 +96,6 @@ int main()
         // Find the closeset unbooked node to s
         int tmpChoice = q.top().index;
         int tmpDist = _dist[tmpChoice];
-        q.pop();
 
         // Pop all the same nodes
         while (!q.empty() && q.top().index == tmpChoice)
@@ -112,8 +111,11 @@ int main()
         // Renew the distances of the unbooked nodes
         while (!edge[tmpChoice].empty())
         {
+            // Select a "neibour"
             int _tmpChoice = edge[tmpChoice].front();
             edge[tmpChoice].pop();
+
+            // If the neibour isn't booked
             if (!isBooked[_tmpChoice])
             {
                 _dist[_tmpChoice] = _min(_dist[_tmpChoice], _dist[tmpChoice] + dist[tmpChoice][_tmpChoice]);
@@ -126,5 +128,6 @@ int main()
     for (int i = 0; i < n; i++)
         cout << _dist[i] << " ";
     cout << "\n";
+
     return 0;
 }
