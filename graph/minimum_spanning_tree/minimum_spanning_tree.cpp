@@ -32,19 +32,24 @@ Edge edge[1005];
 
 int main()
 {
+    // Input
     freopen("./minimum_spanning_tree.in", "r", stdin);
     cin >> n >> m;
 
+    // Define and initialize the union find set
     UnionFind uf(m);
 
+    // Input the edges and load the union find set
     for (int i = 0; i < m; i++)
     {
         cin >> tmp1 >> tmp2 >> tmp3;
         edge[i] = Edge(tmp1, tmp2, tmp3);
     }
 
+    // sort the edges
     sort(edge, edge + m);
 
+    // Greedy algorithm main part
     for (int i = 0; i < m; i++)
     {
         int x = edge[i].x;
@@ -59,6 +64,8 @@ int main()
         if (num >= n - 1)
             break;
 
+        // Add and print the edge
+        uf.unite(x, y);
         cout << "(" << x << ", " << y << ") " << dist << " ";
         cout << "\n";
     }
