@@ -34,8 +34,6 @@ public:
     // Combine two sets
     void unite(int x, int y)
     {
-        cout<<x<<" "<<y;
-
         int rootX = find(x);
         int rootY = find(y);
 
