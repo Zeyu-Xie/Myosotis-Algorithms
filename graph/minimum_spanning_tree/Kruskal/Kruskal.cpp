@@ -33,7 +33,7 @@ Edge edge[1005];
 int main()
 {
     // Input
-    freopen("./minimum_spanning_tree.in", "r", stdin);
+    freopen("./Kruskal.in", "r", stdin);
     cin >> n >> m;
 
     // Define and initialize the union find set
